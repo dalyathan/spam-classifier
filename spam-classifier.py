@@ -1,6 +1,7 @@
 import nltk
 import pandas as pd
 import math
+import numpy as np
 from nltk.classify import NaiveBayesClassifier
 
 def read_data():
@@ -9,7 +10,8 @@ def read_data():
 
     y=shuffled_df['Prediction']
     X=shuffled_df.drop(['Email No.','Prediction'], axis=1)
-    return X,y
+    X_std=(X - X.mean()) / X.std()
+    return X_std,y
 
 def split_data(X,y,train_test_split=0.7):
     last_train_index= math.floor( train_test_split*len(X))
@@ -81,11 +83,11 @@ def display_confusion_marix(predicted, y_test):
     print(f"{actual_positive[0]:<15} {actual_positive[1]:<15} {actual_positive[2]:<15}")
     print(f"{actual_negative[0]:<15} {actual_negative[1]:<15} {actual_negative[2]:<15}")
 
-def __main__():
+def main():
     X,y=read_data()
     X_train,X_test,y_train,y_test=split_data(X,y,0.7)
     predicted=train_and_predict(X_train,X_test, y_train)
-    print("F1", f1(predicted, y_test))
+    print("F1", "{:.3f}".format(f1(predicted, y_test)))
     display_confusion_marix(predicted, y_test)
 
-__main__()
+main()
